@@ -1,0 +1,88 @@
+
+#app {
+    display: flex;
+    border: 1px solid gainsboro;
+    justify-content: center;
+    align-content: center;
+}
+.todo-wrapper {
+    width: 656px;
+    margin: 200px auto;
+}
+.header {
+    height: 50px;
+    width: 100%;
+    background-color: #323232;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+
+
+}
+h2 {
+    color: #DDDDDD;
+    margin-left: 35px;
+    margin-top: 10px;
+
+}
+.enter {
+    width: 300px;
+    height: 28px;
+    margin-left: 150px;
+    margin-top: 11px;
+    border-radius: 5px;
+
+}
+.desk {
+    width: 100%;
+    background-color: #cdcdcd;
+    display: flex;
+}
+
+.a {
+    height:70px;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    justify-content: space-around;
+}
+.doing {
+    color: #000000;
+}
+.qunty {
+    width: 20px;
+    align-self: flex-end;
+    margin-right: 50px;
+    margin-top: 7px;
+    text-align: center;
+    border-radius: 50px;
+    background-color: #E6E6FA;
+}
+
+
+.list {
+    width: 570px;
+    list-style: none;
+    height: 32px;
+    border:1px solid  #CDCDCD;
+    border-radius: 5px;
+    border-left: 5px solid #5bc0de;
+    background-color: #ffffff;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+
+}
+.list input {
+    margin: 9px 12px;
+
+}
+.glyphicon {
+    margin-right: 30px;
+    margin-top: 7px;
+    color: #CDCDCD;
+}
