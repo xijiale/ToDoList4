@@ -2,20 +2,32 @@
  * Created by kingdee on 2017/3/27.
  */
 import React from 'react'
+import {findDOMNode} from 'react-dom'
 
 class TodoItem extends React.Component {
+    handlerChange() {
+        let isDone = !this.props.todos.isDone;
+        this.props.onTodoCheckedChange(this.props.index,isDone);
+    }
+
+    onDeleteClick() {
+        this.props.onDelete(this.props.index);
+    }
+
     render() {
-        let className = this.props.isDone?'task-doing':'task-done'
-        return (
-            <li className="list">
-                <input type="checkbox" aria-label="..." className="inputtype"/>
-                <span className= {className} style={{width: 480,padding:6}}>
-                    {this.props.text}
-                </span>
-                <span className="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>
+        let doneStyle = this.props.todos.isDone ? {textDecoration: "line-through"} : {textDecoration: "none"};
 
-            </li>
+            return (
+                <li className="list">
+                    <input type="checkbox" aria-label="..." className="inputtype" checked={this.props.todos.isDone} onChange={() => this.handlerChange()}/>
+                    <span style={doneStyle}>
+                        {this.props.todos.content}
+                    </span>
+                    <button ref='btlDel' onClick={() => this.onDeleteClick()}>
+                        <span className="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>
+                    </button>
 
+                </li>
         )
     }
 }

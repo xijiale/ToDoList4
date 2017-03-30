@@ -38,6 +38,8 @@ h2 {
     width: 100%;
     background-color: #cdcdcd;
     display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
 }
 
 .a {
