@@ -40,8 +40,11 @@ h2 {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+    justify-content: flex-start;
 }
-
+.run{
+    width: 100%;
+}
 .a {
     height:70px;
     width: 100%;
@@ -64,7 +67,7 @@ h2 {
 }
 
 
-.list {
+.list-doing {
     width: 570px;
     list-style: none;
     height: 32px;
@@ -76,15 +79,38 @@ h2 {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-
-
 }
-.list input {
+.list-done {
+    width: 570px;
+    list-style: none;
+    height: 32px;
+    border:1px solid  #CDCDCD;
+    border-radius: 5px;
+    border-left: 5px solid #9d9d9d;
+    background-color: #c0c0c0;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.list-done .box,.list-doing .box {
     margin: 9px 12px;
 
 }
 .glyphicon {
-    margin-right: 30px;
-    margin-top: 7px;
+    margin-right: 15px;
+    margin-top: 5px;
     color: #CDCDCD;
+}
+.text {
+    width: 480px;
+    padding-top: 5px;
+}
+.list-doing .delete {
+    border: none;
+    background-color: white;
+}
+.list-done .delete {
+    border: none;
+    background-color: #c0c0c0;
 }
