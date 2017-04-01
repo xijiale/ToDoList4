@@ -9483,9 +9483,10 @@ var App = function (_React$Component) {
 
         var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this));
 
+        var todolist = _this.getLocalTodos();
         _this.state = {
-            todos: _this.getLocalTodos() || [],
-            isDone: false
+            doneList: todolist.doneList || [],
+            undoneList: todolist.undoneList || []
         };
         return _this;
     }
@@ -9493,30 +9494,38 @@ var App = function (_React$Component) {
     _createClass(App, [{
         key: 'addTodo',
         value: function addTodo(newTodo) {
-            this.state.todos.push(newTodo);
-            this.setState({ todos: this.state.todos }); //设置状态
+            this.state.undoneList.push(newTodo);
+            this.setState({ doneList: this.state.doneList }); //设置状态
+            this.updateLocalTodos(this.state);
+            this.getLocalTodos();
         }
     }, {
         key: 'onTodoCheckedChange',
         value: function onTodoCheckedChange(index, isDone) {
-
-            if (this.state.todos[index].isDone == isDone) {
-                return false;
+            if (!isDone) {
+                this.state.doneList.push(this.state.undoneList[index]);
+                this.state.undoneList.splice(index, 1);
+            } else {
+                this.state.undoneList.push(this.state.doneList[index]);
+                this.state.doneList.splice(index, 1);
             }
-            this.state.todos[index].isDone = isDone;
-            this.setState({
-                todos: this.state.todos
-            });
-            console.log(this.state.todos);
-            this.updateLocalTodos(this.state.todos);
+            this.setState({ doneList: this.state.doneList });
+            this.setState({ undoneList: this.state.undoneList });
+            this.updateLocalTodos(this.state);
+            this.getLocalTodos();
         }
     }, {
         key: 'deleteTodo',
-        value: function deleteTodo(index) {
-
-            this.state.todos.splice(index, 1);
-            this.setState({ todos: this.state.todos });
-            this.updateLocalTodos(this.state.todos);
+        value: function deleteTodo(index, isDone) {
+            if (isDone) {
+                this.state.doneList.splice(index, 1);
+            } else {
+                this.state.undoneList.splice(index, 1);
+            }
+            this.setState({ doneList: this.state.doneList });
+            this.setState({ undoneList: this.state.undoneList });
+            this.updateLocalTodos(this.state);
+            this.getLocalTodos();
         }
     }, {
         key: 'getLocalTodos',
@@ -9525,49 +9534,45 @@ var App = function (_React$Component) {
                 console.log("Your browser dose NOT support localStorage!");
                 return '';
             }
-            if (localStorage["Todolist"]) {
-                console.log(JSON.parse(localStorage["Todolist"]));
-                return JSON.parse(localStorage["Todolist"]);
-            } else {
-                return "";
-            }
+            var todolist = JSON.parse(localStorage.getItem('Todolist'));
+            console.log(todolist);
+            return todolist;
         }
     }, {
         key: 'updateLocalTodos',
-        value: function updateLocalTodos(todos) {
+        value: function updateLocalTodos(object) {
             if (!window.localStorage) {
                 console.log("Your browser dose NOT support localStorage!");
                 return;
             }
-            localStorage["Todolist"] = JSON.stringify(todos);
+            localStorage.setItem('Todolist', JSON.stringify(object));
         }
     }, {
         key: 'render',
         value: function render() {
             var _this2 = this;
 
-            var doneList = [];
-            var undoneList = [];
-            this.state.todos.forEach(function (item) {
-                if (item.isDone) doneList.push(item);else undoneList.push(item);
-            });
             return _react2.default.createElement(
                 'div',
                 { className: 'todo-wrapper' },
                 _react2.default.createElement(_TodoHeader2.default, { addTodo: function addTodo(newTodo) {
                         return _this2.addTodo(newTodo);
                     } }),
-                _react2.default.createElement(_TodoMain2.default, { state: false, todos: undoneList, onDelete: function onDelete(index) {
-                        return _this2.deleteTodo(index);
+                _react2.default.createElement(_TodoMain2.default, { state: false,
+                    todos: this.state.undoneList,
+                    onDelete: function onDelete(index, isDone) {
+                        return _this2.deleteTodo(index, false);
                     },
                     onTodoCheckedChange: function onTodoCheckedChange(index, isDone) {
-                        return _this2.onTodoCheckedChange(index, isDone);
+                        return _this2.onTodoCheckedChange(index, false);
                     } }),
-                _react2.default.createElement(_TodoMain2.default, { state: true, todos: doneList, onDelete: function onDelete(index) {
-                        return _this2.deleteTodo(index);
+                _react2.default.createElement(_TodoMain2.default, { state: true,
+                    todos: this.state.doneList,
+                    onDelete: function onDelete(index, isDone) {
+                        return _this2.deleteTodo(index, true);
                     },
-                    onTodoCheckedChange: function onTodoCheckedChange(index, isDone) {
-                        return _this2.onTodoCheckedChange(index, isDone);
+                    onTodoCheckedChange: function onTodoCheckedChange(index) {
+                        return _this2.onTodoCheckedChange(index, true);
                     } })
             );
         }
@@ -9601,10 +9606,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Created by kingdee on 2017/3/27.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
-
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var TodoHeader = function (_React$Component) {
     _inherits(TodoHeader, _React$Component);
@@ -9619,8 +9621,7 @@ var TodoHeader = function (_React$Component) {
         key: 'addTodo',
         value: function addTodo(content) {
             var newTodo = {
-                content: content,
-                isDone: false
+                content: content
             };
             this.props.addTodo(newTodo);
         }
@@ -9649,9 +9650,12 @@ var TodoHeader = function (_React$Component) {
                     null,
                     'ToDoList'
                 ),
-                _react2.default.createElement('input', { className: 'enter', onKeyUp: function onKeyUp(e) {
+                _react2.default.createElement('input', { className: 'enter',
+                    onKeyUp: function onKeyUp(e) {
                         return _this2.handlerKeyUp(e);
-                    }, type: 'text', placeholder: '\u8BF7\u8F93\u5165\u4F60\u7684\u4EFB\u52A1\u540D\u79F0\uFF0C\u6309\u56DE\u8F66\u952E\u786E\u8BA4' })
+                    },
+                    type: 'text',
+                    placeholder: '\u8BF7\u8F93\u5165\u4F60\u7684\u4EFB\u52A1\u540D\u79F0\uFF0C\u6309\u56DE\u8F66\u952E\u786E\u8BA4' })
             );
         }
     }]);
@@ -9684,10 +9688,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Created by kingdee on 2017/3/27.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
-
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var TodoItem = function (_React$Component) {
     _inherits(TodoItem, _React$Component);
@@ -9701,8 +9702,7 @@ var TodoItem = function (_React$Component) {
     _createClass(TodoItem, [{
         key: 'handlerChange',
         value: function handlerChange() {
-            var isDone = !this.props.item.isDone;
-            this.props.onTodoCheckedChange(this.props.index, isDone);
+            this.props.onTodoCheckedChange(this.props.index);
         }
     }, {
         key: 'onDeleteClick',
@@ -9714,12 +9714,17 @@ var TodoItem = function (_React$Component) {
         value: function render() {
             var _this2 = this;
 
-            var className = this.props.item.isDone ? 'list-done' : 'list-doing';
+            var className = this.props.state ? 'list-done' : 'list-doing';
+            console.log(className);
 
             return _react2.default.createElement(
                 'li',
                 { className: className },
-                _react2.default.createElement('input', { type: 'checkbox', 'aria-label': '...', className: 'box', checked: this.props.item.isDone, onChange: function onChange() {
+                _react2.default.createElement('input', { type: 'checkbox',
+                    'aria-label': '...',
+                    className: 'box',
+                    checked: this.props.state,
+                    onChange: function onChange() {
                         return _this2.handlerChange();
                     } }),
                 _react2.default.createElement(
@@ -9729,10 +9734,13 @@ var TodoItem = function (_React$Component) {
                 ),
                 _react2.default.createElement(
                     'button',
-                    { ref: 'btlDel', onClick: function onClick() {
+                    { ref: 'btlDel',
+                        onClick: function onClick() {
                             return _this2.onDeleteClick();
-                        }, className: 'delete' },
-                    _react2.default.createElement('span', { className: 'glyphicon glyphicon-remove-circle', 'aria-hidden': 'true' })
+                        },
+                        className: 'delete' },
+                    _react2.default.createElement('span', { className: 'glyphicon glyphicon-remove-circle',
+                        'aria-hidden': 'true' })
                 )
             );
         }
@@ -9770,10 +9778,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Created by kingdee on 2017/3/27.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
-
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var TodoMain = function (_React$Component) {
     _inherits(TodoMain, _React$Component);
@@ -9791,8 +9796,8 @@ var TodoMain = function (_React$Component) {
         }
     }, {
         key: 'onDelete',
-        value: function onDelete(index) {
-            this.props.onDelete(index);
+        value: function onDelete(index, isDone) {
+            this.props.onDelete(index, isDone);
         }
     }, {
         key: 'render',
@@ -9828,8 +9833,12 @@ var TodoMain = function (_React$Component) {
                             'ul',
                             { className: 'task-doing' },
                             this.props.todos.map(function (todo, index) {
-                                return _react2.default.createElement(_TodoItem2.default, { isDone: _this2.props.state, item: todo, index: index, key: index, onDelete: function onDelete(index) {
-                                        return _this2.onDelete(index);
+                                return _react2.default.createElement(_TodoItem2.default, { item: todo,
+                                    state: _this2.props.state,
+                                    index: index,
+                                    key: index,
+                                    onDelete: function onDelete(index, isDone) {
+                                        return _this2.onDelete(index, isDone);
                                     },
                                     onTodoCheckedChange: function onTodoCheckedChange(index, isDone) {
                                         return _this2.onTodoCheckedChange(index, isDone);
@@ -9852,9 +9861,6 @@ exports.default = TodoMain;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * Created by kingdee on 2017/3/27.
- */
 
 
 __webpack_require__(80);
@@ -22130,3 +22136,4 @@ module.exports = g;
 
 /***/ })
 /******/ ]);
+//# sourceMappingURL=bundle.js.map

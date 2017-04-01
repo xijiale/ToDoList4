@@ -1,13 +1,9 @@
-/**
- * Created by kingdee on 2017/3/27.
- */
 import React from 'react'
 
 
 class TodoItem extends React.Component {
     handlerChange() {
-        let isDone = !this.props.item.isDone;
-        this.props.onTodoCheckedChange(this.props.index,isDone);
+        this.props.onTodoCheckedChange(this.props.index);
     }
 
     onDeleteClick() {
@@ -15,22 +11,29 @@ class TodoItem extends React.Component {
     }
 
     render() {
-        let className = this.props.item.isDone ? 'list-done' : 'list-doing';
+        let className = this.props.state ? 'list-done' : 'list-doing';
+        console.log(className);
 
-            return (
-                <li className={className}>
-                    <input type="checkbox" aria-label="..." className="box" checked={this.props.item.isDone} onChange={() => this.handlerChange()}/>
-                    <span className="text">
+        return (
+            <li className={className}>
+                <input type="checkbox"
+                       aria-label="..."
+                       className="box"
+                       checked={this.props.state}
+                       onChange={() => this.handlerChange()}/>
+                <span className="text">
                         {this.props.item.content}
                     </span>
-                    <button ref='btlDel' onClick={() => this.onDeleteClick()} className="delete">
-                        <span className="glyphicon glyphicon-remove-circle" aria-hidden="true"></span>
-                    </button>
+                <button ref='btlDel'
+                        onClick={() => this.onDeleteClick()}
+                        className="delete">
+                    <span className="glyphicon glyphicon-remove-circle"
+                          aria-hidden="true"></span>
+                </button>
 
-                </li>
-            )
+            </li>
+        )
 
     }
 }
-
 export default TodoItem

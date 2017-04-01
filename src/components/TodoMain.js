@@ -1,6 +1,3 @@
-/**
- * Created by kingdee on 2017/3/27.
- */
 import React from 'react'
 import TodoItem from './TodoItem'
 
@@ -8,8 +5,8 @@ class TodoMain extends React.Component {
     onTodoCheckedChange(index,isDone) {
         this.props.onTodoCheckedChange(index,isDone);
     }
-    onDelete(index) {
-        this.props.onDelete(index);
+    onDelete(index,isDone) {
+        this.props.onDelete(index,isDone);
     }
 
     render(){
@@ -26,8 +23,12 @@ class TodoMain extends React.Component {
                         <ul className="task-doing">
                             {
                                 this.props.todos.map((todo,index) => {
-                                    return <TodoItem isDone={this.props.state} item={todo} index= {index}  key = {index} onDelete={(index) => this.onDelete(index)}
-                                    onTodoCheckedChange = {(index,isDone) => this.onTodoCheckedChange(index,isDone)}/>
+                                    return <TodoItem item={todo}
+                                                     state={this.props.state}
+                                                     index= {index}
+                                                     key = {index}
+                                                     onDelete={(index,isDone) => this.onDelete(index,isDone)}
+                                                     onTodoCheckedChange = {(index,isDone) => this.onTodoCheckedChange(index,isDone)}/>
                                 })
                             }
                         </ul>

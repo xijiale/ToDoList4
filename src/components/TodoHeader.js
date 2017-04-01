@@ -1,6 +1,3 @@
-/**
- * Created by kingdee on 2017/3/27.
- */
 import React from 'react'
 
 
@@ -8,7 +5,6 @@ class TodoHeader extends React.Component {
     addTodo(content) {
         let newTodo = {
             content: content,
-            isDone: false
         };
         this.props.addTodo(newTodo);
     }
@@ -27,7 +23,10 @@ class TodoHeader extends React.Component {
         return (
             <div className="header">
                 <h2>ToDoList</h2>
-                <input className="enter" onKeyUp={(e) => this.handlerKeyUp(e)} type="text" placeholder="请输入你的任务名称，按回车键确认"/>
+                <input className="enter"
+                       onKeyUp={(e) => this.handlerKeyUp(e)}
+                       type="text"
+                       placeholder="请输入你的任务名称，按回车键确认"/>
             </div>
         )
     }

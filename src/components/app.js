@@ -6,37 +6,42 @@ import TodoMain from './TodoMain'
 class App extends React.Component { //定义组件，继承父类
     constructor() {
         super()
+        let todolist = this.getLocalTodos();
         this.state = {
-            todos: this.getLocalTodos() || [],
-            isDone: false
+            doneList: todolist.doneList || [],
+            undoneList: todolist.undoneList || []
         }
     }
     addTodo(newTodo) {
-        this.state.todos.push(newTodo);
-        this.setState({todos: this.state.todos});  //设置状态
+        this.state.undoneList.push(newTodo);
+        this.setState({doneList: this.state.doneList});  //设置状态
+        this.updateLocalTodos(this.state);
+        this.getLocalTodos();
     }
     onTodoCheckedChange(index,isDone) {
-
-        if(this.state.todos[index].isDone == isDone) {
-            return false;
+        if(!isDone){
+            this.state.doneList.push(this.state.undoneList[index]);
+            this.state.undoneList.splice(index,1);
+        }else {
+            this.state.undoneList.push(this.state.doneList[index]);
+            this.state.doneList.splice(index,1);
         }
-        this.state.todos[index].isDone = isDone;
-        this.setState(
-            {
-            todos: this.state.todos
-           }
-        );
-        console.log(this.state.todos);
-        this.updateLocalTodos(this.state.todos);
+        this.setState({doneList: this.state.doneList});
+        this.setState({undoneList: this.state.undoneList});
+        this.updateLocalTodos(this.state);
+        this.getLocalTodos();
     }
 
-    deleteTodo(index) {
-
-            this.state.todos.splice(index,1);
-            this.setState({todos: this.state.todos});
-            this.updateLocalTodos(this.state.todos);
-
-
+    deleteTodo(index,isDone) {
+        if (isDone) {
+            this.state.doneList.splice(index,1);
+        }else {
+            this.state.undoneList.splice(index,1);
+        }
+        this.setState({doneList: this.state.doneList});
+        this.setState({undoneList: this.state.undoneList});
+        this.updateLocalTodos(this.state);
+        this.getLocalTodos();
     }
 
     getLocalTodos() {
@@ -44,37 +49,30 @@ class App extends React.Component { //定义组件，继承父类
             console.log("Your browser dose NOT support localStorage!");
             return '';
         }
-        if (localStorage["Todolist"]) {
-            console.log(JSON.parse(localStorage["Todolist"]));
-            return JSON.parse(localStorage["Todolist"]);
-        } else {
-            return "";
-        }
+        let todolist = JSON.parse(localStorage.getItem('Todolist'))
+        console.log(todolist);
+        return todolist;
     }
-    updateLocalTodos(todos) {
+    updateLocalTodos(object) {
         if (!window.localStorage) {
             console.log("Your browser dose NOT support localStorage!");
             return;
         }
-        localStorage["Todolist"] = JSON.stringify(todos);
+        localStorage.setItem('Todolist',JSON.stringify(object));
     }
 
     render(){
-        let doneList = [];
-        let undoneList = [];
-        this.state.todos.forEach(item=>{
-            if(item.isDone)
-                doneList.push(item)
-            else
-                undoneList.push(item);
-        })
         return (
             <div className="todo-wrapper">
                 <TodoHeader addTodo={(newTodo) => this.addTodo(newTodo)}/>
-                <TodoMain state={false} todos={undoneList} onDelete={(index) => this.deleteTodo(index)}
-                          onTodoCheckedChange = {(index,isDone) => this.onTodoCheckedChange(index,isDone)}/>
-                <TodoMain state={true} todos={doneList} onDelete={(index) => this.deleteTodo(index)}
-                          onTodoCheckedChange = {(index,isDone) => this.onTodoCheckedChange(index,isDone)}/>
+                <TodoMain state={false}
+                          todos={this.state.undoneList}
+                          onDelete={(index,isDone) => this.deleteTodo(index,false)}
+                          onTodoCheckedChange = {(index,isDone) => this.onTodoCheckedChange(index,false)}/>
+                <TodoMain state={true}
+                          todos={this.state.doneList}
+                          onDelete={(index,isDone) => this.deleteTodo(index,true)}
+                          onTodoCheckedChange = {(index) => this.onTodoCheckedChange(index,true)}/>
             </div>
         );
     }
