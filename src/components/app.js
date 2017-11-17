@@ -49,7 +49,7 @@ class App extends React.Component { //定义组件，继承父类
             console.log("Your browser dose NOT support localStorage!");
             return '';
         }
-        let todolist = JSON.parse(localStorage.getItem('Todolist'))
+        let todolist = JSON.parse(localStorage.getItem('Todolist')) || {}
         console.log(todolist);
         return todolist;
     }
